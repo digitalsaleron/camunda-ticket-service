@@ -15,12 +15,9 @@
  */
 package vn.sps.study;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.util.SocketUtils;
 
 import io.camunda.zeebe.spring.client.EnableZeebeClient;
 
@@ -29,15 +26,8 @@ import io.camunda.zeebe.spring.client.EnableZeebeClient;
 @EnableScheduling
 public class ZeebeTicketApprover {
 
-	private static final Logger logger = LoggerFactory
-	        .getLogger(ZeebeTicketApprover.class);
-
 	public static void main(String[] args) {
-		int port = SocketUtils.findAvailableTcpPort(8000, 10000);
-		System.setProperty("server.port", String.valueOf(port));
-		logger.info("Random Server Port is set to {}.", port);
 		SpringApplication.run(ZeebeTicketApprover.class, args);
 	}
 
-	
 }

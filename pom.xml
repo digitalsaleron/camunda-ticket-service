@@ -9,6 +9,7 @@
 	<name>camunda-ticket-service</name>
 	<description>Transactional processor that reads from topic, put into db and write to another topic transactionally
   </description>
+	<version>0.0.1</version>
 
 	<properties>
 		<spring-cloud.version>2020.0.2</spring-cloud.version>
