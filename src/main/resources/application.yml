@@ -8,7 +8,7 @@ spring:
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: validateTicket,approveTicket,resolveTicket,notifyFailedTicket
+      function.definition: validateTicket;approveTicket;resolveTicket;notifyFailedTicket
       stream:
          binders:
             kafka1:
@@ -51,13 +51,13 @@ spring:
                destination: ticket-resolution-responses
             notifyFailedTicket-in-0:
                binder: kafka1
-               destination: ticket-rejection-requests
+               destination: ticket-notification-requests
                group: ticket-service
                consumer:
                   maxAttempts: 1
             notifyFailedTicket-out-0:
                binder: kafka1
-               destination: ticket-rejection-responses
+               destination: ticket-notification-responses
          kafka:
             binder:
                minPartitionCount: 1

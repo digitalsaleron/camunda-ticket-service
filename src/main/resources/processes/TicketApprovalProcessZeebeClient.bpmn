@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_160ud08" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.0.0">
-  <bpmn:process id="TicketApprovalProcess" isExecutable="true">
+  <bpmn:process id="TicketApprovalProcessZeebeClient" isExecutable="true">
     <bpmn:extensionElements />
     <bpmn:sequenceFlow id="Flow_04ja1j0" sourceRef="StartEvent_1" targetRef="ticket-validation" />
     <bpmn:serviceTask id="ticket-validation" name="Validate ticket">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" />
+        <zeebe:taskDefinition type="validatingTickets" />
         <zeebe:taskHeaders>
           <zeebe:header key="maxAllowedAmount" value="500" />
           <zeebe:header key="minAllowedAmount" value="100" />
@@ -26,7 +26,7 @@
     <bpmn:sequenceFlow id="Flow_17pquc8" name="no" sourceRef="Gateway_1s23j0b" targetRef="invalid-tickets" />
     <bpmn:serviceTask id="invalid-tickets" name="Notification">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" />
+        <zeebe:taskDefinition type="failedTickets" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_17pquc8</bpmn:incoming>
       <bpmn:outgoing>Flow_1t58zrj</bpmn:outgoing>
@@ -44,10 +44,10 @@
     <bpmn:sequenceFlow id="Flow_1gc51n6" name="yes" sourceRef="Gateway_1p5rtem" targetRef="ticket-resolution">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isApproved = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_18kvyrm" name="no" sourceRef="Gateway_1p5rtem" targetRef="ticket-notification" />
+    <bpmn:sequenceFlow id="Flow_18kvyrm" name="no" sourceRef="Gateway_1p5rtem" targetRef="rejected-tickets" />
     <bpmn:serviceTask id="ticket-resolution" name="Resolve">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" />
+        <zeebe:taskDefinition type="approvedTickets" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1gc51n6</bpmn:incoming>
       <bpmn:outgoing>Flow_07uilwd</bpmn:outgoing>
@@ -59,10 +59,10 @@
     <bpmn:endEvent id="Event_1xrdqny">
       <bpmn:incoming>Flow_1pb4kaz</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1pb4kaz" sourceRef="ticket-notification" targetRef="Event_1xrdqny" />
-    <bpmn:serviceTask id="ticket-notification" name="Notification">
+    <bpmn:sequenceFlow id="Flow_1pb4kaz" sourceRef="rejected-tickets" targetRef="Event_1xrdqny" />
+    <bpmn:serviceTask id="rejected-tickets" name="Notification">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" />
+        <zeebe:taskDefinition type="failedTickets" />
         <zeebe:taskHeaders>
           <zeebe:header key="email.subject" value="The ticket was rejected" />
           <zeebe:header key="email.from" value="trident.notification@swisspost.com" />
@@ -77,7 +77,7 @@
     </bpmn:startEvent>
     <bpmn:serviceTask id="ticket-approval" name="Get Approval">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" />
+        <zeebe:taskDefinition type="waitingForApprovalTickets" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ptzhzm</bpmn:incoming>
       <bpmn:outgoing>Flow_03wxgdw</bpmn:outgoing>
@@ -92,7 +92,7 @@
   <bpmn:message id="Message_0s3pw55" />
   <bpmn:message id="Message_10x14of" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TicketApprovalProcess">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TicketApprovalProcessZeebeClient">
       <bpmndi:BPMNEdge id="Flow_1pb4kaz_di" bpmnElement="Flow_1pb4kaz">
         <di:waypoint x="1060" y="120" />
         <di:waypoint x="1172" y="120" />
@@ -177,7 +177,7 @@
       <bpmndi:BPMNShape id="Event_1xrdqny_di" bpmnElement="Event_1xrdqny">
         <dc:Bounds x="1172" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1rhp920_di" bpmnElement="ticket-notification" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+      <bpmndi:BPMNShape id="Activity_1rhp920_di" bpmnElement="rejected-tickets" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
         <dc:Bounds x="960" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1quo9nw_di" bpmnElement="StartEvent_1">

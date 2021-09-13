@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import vn.sps.study.service.IdService;
 
 @RestController
-@RequestMapping("tickets")
+@RequestMapping("processes")
 @Slf4j
 public class ZeebeProcessController {
 
@@ -25,26 +26,28 @@ public class ZeebeProcessController {
 	@Autowired
 	private IdService idService;
 
-	@PostMapping("/request/{version}")
+	@PostMapping("/{processId}/start")
 	public void request(
 	        @PathVariable(name = "ticketId", required = false) String ticketId,
 	        @RequestParam(name = "type", required = false, defaultValue = "Facility") String type,
 	        @RequestParam(name = "amount", required = false, defaultValue = "1") int amount,
 	        @RequestParam(name = "totalCostAmount", required = false, defaultValue = "500") int totalCostAmount,
-	        @PathVariable(name = "version", required = true) Integer version) {
+	        @PathVariable(name = "processId", required = true) String processId,
+	        @RequestBody(required = false) String envelope) {
 
 		if (ticketId == null) {
 			ticketId = idService.next("TicketId");
 		}
-		
+
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("ticketId", ticketId);
 		variables.put("type", type);
 		variables.put("amount", amount);
 		variables.put("totalCostAmount", totalCostAmount);
+		variables.put("envelope", envelope);
 
-		client.newCreateInstanceCommand().bpmnProcessId("TicketApprovalProcess")
-		        .version(version.intValue()).variables(variables).send();
+		client.newCreateInstanceCommand().bpmnProcessId(processId)
+		        .latestVersion().variables(variables).send();
 
 		log.info(
 		        "Request a ticket with id = {}, type = {}, amount = {}, totalCostAmount = {}",

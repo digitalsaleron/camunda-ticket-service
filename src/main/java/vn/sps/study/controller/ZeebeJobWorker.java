@@ -58,7 +58,7 @@ public class ZeebeJobWorker {
 
 		TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
 		        totalCostAmount);
-		ticketService.resolve(ticket);
+		ticketService.approve(ticket);
 		variables.put("isApproved", ticket.isApproved());
 
 		client.newCompleteCommand(job.getKey()).variables(variables).send();
@@ -88,7 +88,8 @@ public class ZeebeJobWorker {
 	}
 
 	@ZeebeWorker(type = "failedTickets")
-	public void notifyFailedTicket(final JobClient client, final ActivatedJob job) {
+	public void notifyFailedTicket(final JobClient client,
+	        final ActivatedJob job) {
 
 		Map<String, Object> variables = job.getVariablesAsMap();
 		variables.put("isValid", false);
@@ -98,7 +99,8 @@ public class ZeebeJobWorker {
 		int amount = (int) variables.get("amount");
 		int totalCostAmount = (int) variables.get("totalCostAmount");
 
-		log.info("Polled ticket failed notification job for ticket {}", ticketId);
+		log.info("Polled ticket failed notification job for ticket {}",
+		        ticketId);
 
 		TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
 		        totalCostAmount);
