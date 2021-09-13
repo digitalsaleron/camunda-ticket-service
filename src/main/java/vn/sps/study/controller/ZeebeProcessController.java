@@ -17,7 +17,7 @@ import vn.sps.study.service.IdService;
 @RestController
 @RequestMapping("tickets")
 @Slf4j
-public class ZeebeTicketController {
+public class ZeebeProcessController {
 
 	@Autowired
 	private ZeebeClient client;
@@ -25,17 +25,18 @@ public class ZeebeTicketController {
 	@Autowired
 	private IdService idService;
 
-	@PostMapping("/request")
+	@PostMapping("/request/{version}")
 	public void request(
 	        @PathVariable(name = "ticketId", required = false) String ticketId,
 	        @RequestParam(name = "type", required = false, defaultValue = "Facility") String type,
 	        @RequestParam(name = "amount", required = false, defaultValue = "1") int amount,
-	        @RequestParam(name = "totalCostAmount", required = false, defaultValue = "500") int totalCostAmount) {
+	        @RequestParam(name = "totalCostAmount", required = false, defaultValue = "500") int totalCostAmount,
+	        @PathVariable(name = "version", required = true) Integer version) {
 
 		if (ticketId == null) {
 			ticketId = idService.next("TicketId");
 		}
-
+		
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("ticketId", ticketId);
 		variables.put("type", type);
@@ -43,7 +44,8 @@ public class ZeebeTicketController {
 		variables.put("totalCostAmount", totalCostAmount);
 
 		client.newCreateInstanceCommand().bpmnProcessId("TicketApprovalProcess")
-		        .latestVersion().variables(variables).send();
+		        .version(version.intValue()).variables(variables).send();
+
 		log.info(
 		        "Request a ticket with id = {}, type = {}, amount = {}, totalCostAmount = {}",
 		        ticketId, type, amount, totalCostAmount);

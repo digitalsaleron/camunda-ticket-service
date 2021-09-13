@@ -27,7 +27,7 @@ import vn.sps.study.service.TicketService;
 @Configuration
 @Slf4j
 @Profile(ProfileNames.KAFKA_CLIENT)
-public class KafkaStreamIntegrator {
+public class KafkaEventHandler {
 
 	@Autowired
 	private TicketService ticketService;

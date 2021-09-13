@@ -2,13 +2,13 @@ sleep.time.second: 1
 spring:
    boot.admin.client:
       enabled: false
-      url: http://localhost:8089
+      url: ${springboot-admin-server}
       instance:
          prefer-ip: true
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: validateTicket
+      function.definition: validateTicket,approveTicket,resolveTicket,notifyFailedTicket
       stream:
          binders:
             kafka1:
@@ -24,13 +24,40 @@ spring:
             applicationMetrics.destination: ${tenant.prefix}.process-metrics
             validateTicket-in-0:
                binder: kafka1
-               destination: ${tenant.prefix}.ticket-validation-requests
-               group: extraction
+               destination: ticket-validation-requests
+               group: ticket-service
                consumer:
                   maxAttempts: 1
             validateTicket-out-0:
                binder: kafka1
-               destination: ${tenant.prefix}.ticket-validation-responses
+               destination: ticket-validation-responses
+            approveTicket-in-0:
+               binder: kafka1
+               destination: ticket-approval-requests
+               group: ticket-service
+               consumer:
+                  maxAttempts: 1
+            approveTicket-out-0:
+               binder: kafka1
+               destination: ticket-approval-responses
+            resolveTicket-in-0:
+               binder: kafka1
+               destination: ticket-resolution-requests
+               group: ticket-service
+               consumer:
+                  maxAttempts: 1
+            resolveTicket-out-0:
+               binder: kafka1
+               destination: ticket-resolution-responses
+            notifyFailedTicket-in-0:
+               binder: kafka1
+               destination: ticket-rejection-requests
+               group: ticket-service
+               consumer:
+                  maxAttempts: 1
+            notifyFailedTicket-out-0:
+               binder: kafka1
+               destination: ticket-rejection-responses
          kafka:
             binder:
                minPartitionCount: 1
@@ -39,7 +66,7 @@ spring:
                   max.poll.records: 5
                   max.poll.interval.ms: 300000
                transaction:
-                  transaction-id-prefix: kafka-connect-${random.uuid}-
+                  transaction-id-prefix: ticket-service-${random.uuid}-
                   producer:
                      configuration:
                         max.in.flight.requests.per.connection: 1
@@ -94,18 +121,9 @@ management:
       jmx.exposure.include: '*'
    endpoint:
       health.show-details: always
-camunda.bpm.client:
-   base-url: http://192.168.56.4:8099/engine-rest # the URL pointing to the Camunda Platform Runtime REST API
-   lock-duration: 300000 # defines how many milliseconds the External Tasks are locked until they can be fetched again
-   subscriptions:
-      validatingTickets:
-         variable-names: type,amount,totalCostAmount
-         process-definition-key: TicketApprovalProcess
-      approvedTickets:
-         variable-names: type,amount,totalCostAmount,isValid,isApproved
-         process-definition-key: TicketApprovalProcess
+
 zeebe.client:
-   broker.gatewayAddress: 192.168.56.4:26500
+   broker.gatewayAddress: ${zeebe-gateway}
    security.plaintext: true
    worker:
       maxJobsActive: 1

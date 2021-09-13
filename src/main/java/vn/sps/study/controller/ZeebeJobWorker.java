@@ -18,7 +18,7 @@ import vn.sps.study.service.TicketService;
 @Component
 @Profile(ProfileNames.ZEEBE_CLIENT)
 @Slf4j
-public class ZeebeTicketApprovalHandler {
+public class ZeebeJobWorker {
 
 	@Autowired
 	private TicketService ticketService;
