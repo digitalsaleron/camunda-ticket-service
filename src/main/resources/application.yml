@@ -8,7 +8,7 @@ spring:
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: process
+      function.definition: validateTicket
       stream:
          binders:
             kafka1:
@@ -22,30 +22,24 @@ spring:
                                  brokers: ${bootstrap.server}
          bindings:
             applicationMetrics.destination: ${tenant.prefix}.process-metrics
-            process-in-0:
+            validateTicket-in-0:
                binder: kafka1
-               destination: ${tenant.prefix}.ticket-approval-requests
+               destination: ${tenant.prefix}.ticket-validation-requests
                group: extraction
                consumer:
                   maxAttempts: 1
-            process-out-0:
+            validateTicket-out-0:
                binder: kafka1
-               destination: ${tenant.prefix}.ticket-approval-responses
+               destination: ${tenant.prefix}.ticket-validation-responses
          kafka:
-            bindings:
-               process-in-0:
-                  consumer:
-                     configuration:
-                        isolation.level: read_committed
-                        max.poll.records: 5
-                        max.poll.interval.ms: 300000
-               process-out-0:
-                  producer:
-                     topic.properties:
-                        retention.ms: 600000
             binder:
+               minPartitionCount: 1
+               consumerProperties:
+                  isolation.level: read_committed
+                  max.poll.records: 5
+                  max.poll.interval.ms: 300000
                transaction:
-                  transaction-id-prefix: approval-
+                  transaction-id-prefix: kafka-connect-${random.uuid}-
                   producer:
                      configuration:
                         max.in.flight.requests.per.connection: 1

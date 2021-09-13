@@ -1,64 +1,61 @@
 package vn.sps.study.controller;
 
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.config.ListenerContainerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 import org.springframework.kafka.listener.DefaultAfterRollbackProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.backoff.FixedBackOff;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import lombok.extern.slf4j.Slf4j;
+import vn.sps.study.app.ProfileNames;
 import vn.sps.study.model.TicketRequest;
 import vn.sps.study.service.TicketService;
 
 @Component
 @Configuration
+@Slf4j
+@Profile(ProfileNames.KAFKA_CLIENT)
 public class KafkaStreamIntegrator {
 
-	private static final Logger logger = LoggerFactory
-	        .getLogger(KafkaStreamIntegrator.class);
-	@Value("${sleep.time.second:5}")
-	private int sleepTime;
-
-	private static Random rd = new Random();
-
-	private static void sleepInSecond(int second) {
-		try {
-			TimeUnit.SECONDS.sleep(rd.nextInt(second));
-		} catch (InterruptedException ex) {
-		}
-	}
-
 	@Autowired
-	private TicketService approvalService;
+	private TicketService ticketService;
 
 	@Transactional
 	@Bean
-	public Function<JsonNode, JsonNode> process() {
-		return e -> {
-			logger.info("Received event {}", e.toString());
+	public Function<JsonNode, JsonNode> validateTicket() {
+		return new Function<JsonNode, JsonNode>() {
 
-			if (sleepTime > 0) {
-				sleepInSecond(sleepTime);
+			@Override
+			public JsonNode apply(JsonNode e) {
+
+				ObjectNode t = (ObjectNode) e;
+
+				String ticketId = t.findValue("ticketId").textValue();
+				String type = t.findValue("type").textValue();
+				int amount = t.findValue("amount").intValue();
+				int totalCostAmount = t.findValue("totalCostAmount").intValue();
+
+				log.info("Received ticket validation event for ticket {}",
+				        ticketId);
+
+				TicketRequest ticket = TicketRequest.from(ticketId, type,
+				        amount, totalCostAmount);
+				ticketService.validate(ticket);
+				t.put("isValid", ticket.isValid());
+
+				return t;
 			}
-			TicketRequest rq = new TicketRequest("1", 1, 500, false, false,
-			        "Facilitites");
-			approvalService.approve(rq);
-
-			logger.info("Sent event {}", e.toString());
-			return e;
 		};
 	}
 
