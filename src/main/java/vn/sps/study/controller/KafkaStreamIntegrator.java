@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 import vn.sps.study.app.ProfileNames;
+import vn.sps.study.model.ResolvedTicketResult;
 import vn.sps.study.model.TicketRequest;
 import vn.sps.study.service.TicketService;
 
@@ -34,28 +35,96 @@ public class KafkaStreamIntegrator {
 	@Transactional
 	@Bean
 	public Function<JsonNode, JsonNode> validateTicket() {
-		return new Function<JsonNode, JsonNode>() {
+		return e -> {
 
-			@Override
-			public JsonNode apply(JsonNode e) {
+			ObjectNode t = (ObjectNode) e;
 
-				ObjectNode t = (ObjectNode) e;
+			String ticketId = t.findValue("ticketId").textValue();
+			String type = t.findValue("type").textValue();
+			int amount = t.findValue("amount").intValue();
+			int totalCostAmount = t.findValue("totalCostAmount").intValue();
 
-				String ticketId = t.findValue("ticketId").textValue();
-				String type = t.findValue("type").textValue();
-				int amount = t.findValue("amount").intValue();
-				int totalCostAmount = t.findValue("totalCostAmount").intValue();
+			log.info("Received ticket validation event for ticket {}",
+			        ticketId);
 
-				log.info("Received ticket validation event for ticket {}",
-				        ticketId);
+			TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
+			        totalCostAmount);
+			ticketService.validate(ticket);
+			t.put("isValid", ticket.isValid());
 
-				TicketRequest ticket = TicketRequest.from(ticketId, type,
-				        amount, totalCostAmount);
-				ticketService.validate(ticket);
-				t.put("isValid", ticket.isValid());
+			return t;
+		};
+	}
 
-				return t;
-			}
+	@Transactional
+	@Bean
+	public Function<JsonNode, JsonNode> approveTicket() {
+		return e -> {
+
+			ObjectNode t = (ObjectNode) e;
+
+			String ticketId = t.findValue("ticketId").textValue();
+			String type = t.findValue("type").textValue();
+			int amount = t.findValue("amount").intValue();
+			int totalCostAmount = t.findValue("totalCostAmount").intValue();
+
+			log.info("Received ticket approval event for ticket {}", ticketId);
+
+			TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
+			        totalCostAmount);
+			ticketService.approve(ticket);
+			t.put("isApproved", ticket.isApproved());
+
+			return t;
+		};
+	}
+
+	@Transactional
+	@Bean
+	public Function<JsonNode, JsonNode> resolveTicket() {
+		return e -> {
+
+			ObjectNode t = (ObjectNode) e;
+
+			String ticketId = t.findValue("ticketId").textValue();
+			String type = t.findValue("type").textValue();
+			int amount = t.findValue("amount").intValue();
+			int totalCostAmount = t.findValue("totalCostAmount").intValue();
+
+			log.info("Received ticket resolution event for ticket {}",
+			        ticketId);
+
+			TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
+			        totalCostAmount);
+			ResolvedTicketResult result = ticketService.resolve(ticket);
+
+			t.put("isResolved", result.isResolved());
+			t.put("resolution", result.getResolution());
+
+			return t;
+		};
+	}
+
+	@Transactional
+	@Bean
+	public Function<JsonNode, JsonNode> notifyFailedTicket() {
+		return e -> {
+
+			ObjectNode t = (ObjectNode) e;
+
+			String ticketId = t.findValue("ticketId").textValue();
+			String type = t.findValue("type").textValue();
+			int amount = t.findValue("amount").intValue();
+			int totalCostAmount = t.findValue("totalCostAmount").intValue();
+
+			log.info("Received ticket resolution event for ticket {}",
+			        ticketId);
+
+			TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
+			        totalCostAmount);
+			ticketService.notify(ticket);
+
+			return t;
 		};
 	}
 
