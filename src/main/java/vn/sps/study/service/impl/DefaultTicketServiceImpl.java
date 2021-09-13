@@ -52,6 +52,7 @@ public class DefaultTicketServiceImpl implements TicketService {
 		        ticket.getTotalCostAmount());
 
 		ticket.setValid(ticket.getType() != null);
+		ticket.setValid(ticket.getTotalCostAmount() > 0);
 		return ticket.isValid();
 	}
 
