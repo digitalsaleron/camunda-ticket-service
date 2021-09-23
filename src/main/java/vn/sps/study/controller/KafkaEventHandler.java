@@ -127,6 +127,29 @@ public class KafkaEventHandler {
 			return t;
 		};
 	}
+	
+	@Transactional
+	@Bean
+	public Function<JsonNode, JsonNode> notifyRejectedTicket() {
+		return e -> {
+
+			ObjectNode t = (ObjectNode) e;
+
+			String ticketId = t.findValue("ticketId").textValue();
+			String type = t.findValue("type").textValue();
+			int amount = t.findValue("amount").intValue();
+			int totalCostAmount = t.findValue("totalCostAmount").intValue();
+
+			log.info("Received ticket resolution event for ticket {}",
+			        ticketId);
+
+			TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
+			        totalCostAmount);
+			ticketService.notify(ticket);
+
+			return t;
+		};
+	}
 
 	@Bean
 	public ListenerContainerCustomizer<AbstractMessageListenerContainer<byte[], byte[]>> customizer() {

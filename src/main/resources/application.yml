@@ -8,7 +8,7 @@ spring:
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: validateTicket;approveTicket;resolveTicket;notifyFailedTicket
+      function.definition: validateTicket;approveTicket;resolveTicket;notifyFailedTicket;notifyRejectedTicket
       stream:
          binders:
             kafka1:
@@ -20,6 +20,7 @@ spring:
                            kafka:
                               binder:
                                  brokers: ${bootstrap.server}
+                                 configuration.security.protocol: PLAINTEXT
          bindings:
             applicationMetrics.destination: ${tenant.prefix}.process-metrics
             validateTicket-in-0:
@@ -58,6 +59,15 @@ spring:
             notifyFailedTicket-out-0:
                binder: kafka1
                destination: ticket-notification-responses
+            notifyRejectedTicket-in-0:
+               binder: kafka1
+               destination: ticket-notification-rand4-requests
+               group: ticket-service
+               consumer:
+                  maxAttempts: 1
+            notifyRejectedTicket-out-0:
+               binder: kafka1
+               destination: ticket-notification-rand4-responses
          kafka:
             binder:
                minPartitionCount: 1
@@ -124,7 +134,10 @@ management:
 
 zeebe.client:
    broker.gatewayAddress: ${zeebe-gateway}
-   security.plaintext: true
+   security:
+      plaintext: true
+      #certPath: C:/Users/thminh_1/.ssh/ssl/digitalsaleron.cer
+      #certPath: C:/Users/thminh_1/.ssh/zeebeclient.keystore.jks
    worker:
       maxJobsActive: 1
       threads: 1
