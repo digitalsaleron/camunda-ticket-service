@@ -2,7 +2,9 @@ package vn.sps.study.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import com.google.protobuf.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import vn.sps.study.service.IdService;
 
 @RestController
-@RequestMapping("processes")
 @Slf4j
+@RequestMapping
 public class ZeebeProcessController {
 
 	@Autowired
@@ -26,7 +28,7 @@ public class ZeebeProcessController {
 	@Autowired
 	private IdService idService;
 
-	@PostMapping("/{processId}/start")
+	@PostMapping("/processes/{processId}/start")
 	public void request(
 	        @PathVariable(name = "ticketId", required = false) String ticketId,
 	        @RequestParam(name = "type", required = false, defaultValue = "Facility") String type,
@@ -48,10 +50,41 @@ public class ZeebeProcessController {
 
 		client.newCreateInstanceCommand().bpmnProcessId(processId)
 		        .latestVersion().variables(variables).send();
-
 		log.info(
 		        "Request a ticket with id = {}, type = {}, amount = {}, totalCostAmount = {}",
 		        ticketId, type, amount, totalCostAmount);
+	}
+
+	@PostMapping("/messages/{messageName}/start")
+	public void message(
+			@PathVariable(name = "ticketId", required = false) String ticketId,
+			@RequestParam(name = "type", required = false, defaultValue = "Facility") String type,
+			@RequestParam(name = "amount", required = false, defaultValue = "1") int amount,
+			@RequestParam(name = "totalCostAmount", required = false, defaultValue = "500") int totalCostAmount,
+			@PathVariable(name = "messageName", required = true) String messageName,
+			@RequestBody(required = false) String envelope) {
+
+		if (ticketId == null) {
+			ticketId = idService.next("TicketId");
+		}
+
+		Map<String, Object> variables = new HashMap<String, Object>();
+		variables.put("ticketId", ticketId);
+		variables.put("type", type);
+		variables.put("amount", amount);
+		variables.put("totalCostAmount", totalCostAmount);
+		variables.put("envelope", envelope);
+
+		String correlationKey = UUID.randomUUID().toString();
+		client.newPublishMessageCommand()
+				.messageName(messageName)
+				.correlationKey(correlationKey)
+
+
+				.variables(variables).send();
+		log.info(
+				"Message from {} with correlation key {} - Request a ticket with id = {}, type = {}, amount = {}, totalCostAmount = {}",
+				messageName,correlationKey , ticketId, type, amount, totalCostAmount);
 	}
 
 }
