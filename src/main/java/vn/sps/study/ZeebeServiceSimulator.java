@@ -24,10 +24,10 @@ import io.camunda.zeebe.spring.client.EnableZeebeClient;
 @SpringBootApplication
 @EnableZeebeClient
 @EnableScheduling
-public class ZeebeTicketApprover {
+public class ZeebeServiceSimulator {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ZeebeTicketApprover.class, args);
+		SpringApplication.run(ZeebeServiceSimulator.class, args);
 	}
 
 }

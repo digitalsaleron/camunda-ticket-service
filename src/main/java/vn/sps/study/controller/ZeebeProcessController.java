@@ -6,12 +6,7 @@ import java.util.UUID;
 
 import com.google.protobuf.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.camunda.zeebe.client.ZeebeClient;
 import lombok.extern.slf4j.Slf4j;
@@ -57,34 +52,25 @@ public class ZeebeProcessController {
 
 	@PostMapping("/messages/{messageName}/start")
 	public void message(
-			@PathVariable(name = "ticketId", required = false) String ticketId,
-			@RequestParam(name = "type", required = false, defaultValue = "Facility") String type,
-			@RequestParam(name = "amount", required = false, defaultValue = "1") int amount,
-			@RequestParam(name = "totalCostAmount", required = false, defaultValue = "500") int totalCostAmount,
 			@PathVariable(name = "messageName", required = true) String messageName,
-			@RequestBody(required = false) String envelope) {
+			@RequestHeader Map<String, Object> headers,
+			@RequestBody Map<String, Object> bodyParts) {
 
-		if (ticketId == null) {
-			ticketId = idService.next("TicketId");
-		}
+		String eventId = (String) bodyParts.get("eventId");
 
 		Map<String, Object> variables = new HashMap<String, Object>();
-		variables.put("ticketId", ticketId);
-		variables.put("type", type);
-		variables.put("amount", amount);
-		variables.put("totalCostAmount", totalCostAmount);
-		variables.put("envelope", envelope);
+		variables.putAll(headers);
+		variables.putAll(bodyParts);
 
 		String correlationKey = UUID.randomUUID().toString();
 		client.newPublishMessageCommand()
 				.messageName(messageName)
-				.correlationKey(correlationKey)
+				.correlationKey(eventId)
 
 
 				.variables(variables).send();
 		log.info(
-				"Message from {} with correlation key {} - Request a ticket with id = {}, type = {}, amount = {}, totalCostAmount = {}",
-				messageName,correlationKey , ticketId, type, amount, totalCostAmount);
+				"Message from {} with correlation key {}", messageName,eventId );
 	}
 
 }

@@ -1,0 +1,96 @@
+project.dm.prefix: dm
+spring:
+  cloud:
+    stream:
+      bindings:
+        validateInput-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.input-validation-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        validateInput-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.input-validation-responses
+        sftpDownload-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.sftp-download-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        sftpDownload-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.sftp-download-responses
+        unzip-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.unzip-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        unzip-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.unzip-responses
+        extractMetadata-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.metadata-extraction-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        extractMetadata-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.metadata-extraction-responses
+        convertToJPG-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.image-conversion-2jpg-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        convertToJPG-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.image-conversion-2jpg-responses
+        convertToTIF-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.image-conversion-2tif-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        convertToTIF-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.image-conversion-2tif-responses
+        autoClassify-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.auto-classification-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        autoClassify-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.auto-classification-responses
+        manualClassify-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.manual-classification-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        manualClassify-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.manual-classification-responses
+        processCheck-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.check-processing-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        processCheck-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.check-processing-responses
+        sftpExport-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.sftp-export-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        sftpExport-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.sftp-export-responses
+   

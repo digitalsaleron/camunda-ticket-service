@@ -23,6 +23,8 @@ public class ZeebeJobWorker {
 	@Autowired
 	private TicketService ticketService;
 
+
+
 	@ZeebeWorker(type = "validatingTickets")
 	public void validate(final JobClient client, final ActivatedJob job) {
 
@@ -34,14 +36,21 @@ public class ZeebeJobWorker {
 		int amount = (int) variables.get("amount");
 		int totalCostAmount = (int) variables.get("totalCostAmount");
 
+
 		log.info("Polled ticket validation job for ticket {}", ticketId);
 
 		TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
 		        totalCostAmount);
+		ticket.setExceptionStep(extractException(variables, job));
 		variables.put("isValid", ticketService.validate(ticket));
 
 		client.newCompleteCommand(job.getKey()).variables(variables).send();
 
+	}
+
+	private static String extractException(Map<String, Object> variables, ActivatedJob job) {
+		String exceptionStep = (String) variables.get("exceptionStep");
+		return exceptionStep==null || exceptionStep.isEmpty() || !job.getElementId().startsWith(exceptionStep)?null:exceptionStep;
 	}
 
 	@ZeebeWorker(type = "waitingForApprovalTickets")
@@ -58,6 +67,8 @@ public class ZeebeJobWorker {
 
 		TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
 		        totalCostAmount);
+		ticket.setExceptionStep(extractException(variables, job));
+
 		ticketService.approve(ticket);
 		variables.put("isApproved", ticket.isApproved());
 
@@ -74,10 +85,13 @@ public class ZeebeJobWorker {
 		String type = (String) variables.get("type");
 		int amount = (int) variables.get("amount");
 		int totalCostAmount = (int) variables.get("totalCostAmount");
+		String exceptionStep = (String) variables.get("exceptionStep");
 
 		log.info("Polled ticket resolution job for ticket {}", ticketId);
 		TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
 		        totalCostAmount);
+		ticket.setExceptionStep(extractException(variables, job));
+
 		ResolvedTicketResult res = ticketService.resolve(ticket);
 
 		variables.put("isResolved", res.isResolved());
@@ -98,12 +112,15 @@ public class ZeebeJobWorker {
 		String type = (String) variables.get("type");
 		int amount = (int) variables.get("amount");
 		int totalCostAmount = (int) variables.get("totalCostAmount");
+		String exceptionStep = (String) variables.get("exceptionStep");
 
 		log.info("Polled ticket failed notification job for ticket {}",
 		        ticketId);
 
 		TicketRequest ticket = TicketRequest.from(ticketId, type, amount,
 		        totalCostAmount);
+		ticket.setExceptionStep(extractException(variables, job));
+
 		ticketService.notify(ticket);
 
 		client.newCompleteCommand(job.getKey()).variables(variables).send();
