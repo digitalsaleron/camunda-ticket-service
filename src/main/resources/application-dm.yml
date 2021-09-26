@@ -93,4 +93,31 @@ spring:
         sftpExport-out-0:
           binder: kafka1
           destination: ${project.dm.prefix}.sftp-export-responses
+        notifyBusiness-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.bussiness-notification-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        notifyBusiness-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.bussiness-notification-responses
+        updateAckStatus-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.ack-status-update-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        updateAckStatus-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.ack-status-update-responses
+        createMETicket-in-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.manage-engine-requests
+          group: document-service
+          consumer:
+            maxAttempts: 1
+        createMETicket-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.manage-engine-responses
    

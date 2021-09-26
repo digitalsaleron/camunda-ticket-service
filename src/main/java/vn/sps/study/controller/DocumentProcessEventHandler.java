@@ -225,6 +225,70 @@ public class DocumentProcessEventHandler {
             SFTPExportRequest request = SFTPExportRequest.from(traceId, eventId);
             SFTPExportResult result = service.sftpExport(request);
 
+            t.put("batchId", result.getBatchId());
+
+            return t;
+        };
+    }
+
+    @Transactional
+    @Bean
+    public Function<JsonNode, JsonNode> updateAckStatus() {
+        return e -> {
+
+            ObjectNode t = (ObjectNode) e;
+
+            String traceId = t.findValue("traceId").textValue();
+            String eventId = t.findValue("eventId").textValue();
+
+
+            log.info("Received acknowledgement update event for document {}", traceId);
+
+            AcknowledgementUpdateRequest request = AcknowledgementUpdateRequest.from(traceId, eventId);
+            AcknowledgementUpdateResult result = service.updateAck(request);
+
+            return t;
+        };
+    }
+
+    @Transactional
+    @Bean
+    public Function<JsonNode, JsonNode> createMETicket() {
+        return e -> {
+
+            ObjectNode t = (ObjectNode) e;
+
+            String traceId = t.findValue("traceId").textValue();
+            String eventId = t.findValue("eventId").textValue();
+
+
+            log.info("Received acknowledgement update event for document {}", traceId);
+
+            ManageEngineRequest request = ManageEngineRequest.from(traceId, eventId);
+            ManageEngineResult result = service.createTicket(request);
+            t.put("ticketId",result.getTicketId());
+
+            return t;
+        };
+    }
+
+
+    @Transactional
+    @Bean
+    public Function<JsonNode, JsonNode> notifyBusiness() {
+        return e -> {
+
+            ObjectNode t = (ObjectNode) e;
+
+            String traceId = t.findValue("traceId").textValue();
+            String eventId = t.findValue("eventId").textValue();
+
+
+            log.info("Received business error notification event for document {}", traceId);
+
+            SFTPExportRequest request = SFTPExportRequest.from(traceId, eventId);
+            SFTPExportResult result = service.sftpExport(request);
+
             return t;
         };
     }

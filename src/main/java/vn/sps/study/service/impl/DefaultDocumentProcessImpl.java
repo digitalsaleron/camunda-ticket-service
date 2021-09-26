@@ -1,9 +1,13 @@
 package vn.sps.study.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.sps.study.model.*;
 import vn.sps.study.service.DocumentProcessService;
+import vn.sps.study.service.IdService;
+
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -61,6 +65,25 @@ public class DefaultDocumentProcessImpl implements DocumentProcessService {
 
     @Override
     public SFTPExportResult sftpExport(SFTPExportRequest request) {
+
+        SFTPExportResult result = SFTPExportResult.from(request.getTraceId(), request.getEventId());
+        result.setBatchId(UUID.randomUUID().toString());
+        return result;
+    }
+
+    @Override
+    public AcknowledgementUpdateResult updateAck(AcknowledgementUpdateRequest request) {
         return null;
+    }
+
+    @Autowired
+    private IdService idService;
+
+    @Override
+    public ManageEngineResult createTicket(ManageEngineRequest request) {
+
+        ManageEngineResult result =ManageEngineResult.from(request.getTraceId(), request.getEventId());
+        result.setTicketId(idService.next("ME_TICKET")+"");
+        return result;
     }
 }
