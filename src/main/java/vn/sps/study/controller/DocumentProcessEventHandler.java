@@ -180,7 +180,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received manual classification event for document {}", traceId);
+            log.info("Received manual classification event for document {} eventId = {}", traceId, eventId);
 
             ManualClassificationRequest request = ManualClassificationRequest.from(traceId, eventId);
             ManualClassificationResult result = service.manualClassify(request);
@@ -226,6 +226,8 @@ public class DocumentProcessEventHandler {
             SFTPExportResult result = service.sftpExport(request);
 
             t.put("batchId", result.getBatchId());
+
+            log.info("Exported batch with id {}",result.getBatchId());
 
             return t;
         };
