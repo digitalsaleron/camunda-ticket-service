@@ -39,7 +39,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received document validation event for document {}",
+            log.info("Received input validation event for document {}",
                     traceId);
             DocumentValidationRequest request = DocumentValidationRequest.from(traceId, eventId);
             DocumentValidationResult result = service.validate(request);
@@ -61,7 +61,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received document sftp download event for document {}", traceId);
+            log.info("Received sftp download event for document {}", traceId);
 
             SFTPDownloadRequest request = SFTPDownloadRequest.from(traceId, eventId);
             SFTPDownloadResult result = service.sftpDownload(request);
@@ -80,7 +80,7 @@ public class DocumentProcessEventHandler {
             String traceId = t.findValue("traceId").textValue();
             String eventId = t.findValue("eventId").textValue();
 
-            log.info("Received document unzip event for document {}", traceId);
+            log.info("Received unzip event for document {}", traceId);
 
             UnzippedDocumentRequest request = UnzippedDocumentRequest.from(traceId, eventId);
             UnzippedDocumentResult result = service.unzip(request);
@@ -118,11 +118,11 @@ public class DocumentProcessEventHandler {
 
             String traceId = t.findValue("traceId").textValue();
             String eventId = t.findValue("eventId").textValue();
+            String toFormat = "JPG";
 
+            log.info("Received {} image conversion event for document {}", toFormat, traceId);
 
-            log.info("Received image conversion event for document {}", traceId);
-
-            ImageConversionRequest request = ImageConversionRequest.from(traceId, eventId, "JPG");
+            ImageConversionRequest request = ImageConversionRequest.from(traceId, eventId, toFormat);
             ImageConversionResult result = service.convertImage(request);
 
             return t;
@@ -138,11 +138,11 @@ public class DocumentProcessEventHandler {
 
             String traceId = t.findValue("traceId").textValue();
             String eventId = t.findValue("eventId").textValue();
+            String toFormat = "TIF";
 
+            log.info("Received {} image conversion event for document {}", toFormat, traceId);
 
-            log.info("Received image conversion event for document {}", traceId);
-
-            ImageConversionRequest request = ImageConversionRequest.from(traceId, eventId, "TIF");
+            ImageConversionRequest request = ImageConversionRequest.from(traceId, eventId, toFormat);
             ImageConversionResult result = service.convertImage(request);
 
             return t;
@@ -160,7 +160,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received image conversion event for document {}", traceId);
+            log.info("Received auto classification event for document {}", traceId);
 
             AutoClassificationRequest request = AutoClassificationRequest.from(traceId, eventId);
             AutoClassificationResult result = service.autoClassify(request);
@@ -180,7 +180,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received image conversion event for document {}", traceId);
+            log.info("Received manual classification event for document {}", traceId);
 
             ManualClassificationRequest request = ManualClassificationRequest.from(traceId, eventId);
             ManualClassificationResult result = service.manualClassify(request);
@@ -200,7 +200,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received image conversion event for document {}", traceId);
+            log.info("Received check processing event for document {}", traceId);
 
             CheckProcessingRequest request = CheckProcessingRequest.from(traceId, eventId);
             CheckProcessingResult result = service.processCheck(request);
@@ -220,7 +220,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received image conversion event for document {}", traceId);
+            log.info("Received sftp export event for document {}", traceId);
 
             SFTPExportRequest request = SFTPExportRequest.from(traceId, eventId);
             SFTPExportResult result = service.sftpExport(request);
@@ -262,7 +262,7 @@ public class DocumentProcessEventHandler {
             String eventId = t.findValue("eventId").textValue();
 
 
-            log.info("Received acknowledgement update event for document {}", traceId);
+            log.info("Received ME creation event for document {}", traceId);
 
             ManageEngineRequest request = ManageEngineRequest.from(traceId, eventId);
             ManageEngineResult result = service.createTicket(request);
