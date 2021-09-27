@@ -58,7 +58,6 @@ public class ZeebeProcessController {
             @RequestBody Map<String, Object> bodyParts) {
 
         final Map<String, Object> variables = new HashMap<String, Object>();
-        variables.putAll(headers);
         variables.putAll(bodyParts);
 
 
