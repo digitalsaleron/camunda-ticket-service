@@ -120,4 +120,13 @@ spring:
         createMETicket-out-0:
           binder: kafka1
           destination: ${project.dm.prefix}.manage-engine-responses
+        completeManualClassForDocument-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.operator-completion
+        completeCheckProcessing-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.check-processing-responses
+        acknowledgePackage-out-0:
+          binder: kafka1
+          destination: ${project.dm.prefix}.acknowledgement
    

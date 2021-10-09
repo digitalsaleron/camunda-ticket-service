@@ -8,7 +8,7 @@ spring:
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: validateTicket;approveTicket;resolveTicket;notifyFailedTicket;notifyRejectedTicket;validateInput;sftpDownload;unzip;extractMetadata;convertToJPG;convertToTIF;autoClassify;manualClassify;processCheck;sftpExport;updateAckStatus;createMETicket
+      function.definition: validateTicket;approveTicket;resolveTicket;notifyFailedTicket;notifyRejectedTicket;validateInput;sftpDownload;unzip;extractMetadata;convertToJPG;convertToTIF;autoClassify;manualClassify;processCheck;sftpExport;updateAckStatus;createMETicket;completeManualClassForDocument;completeCheckProcessing;acknowledgePackage
       stream:
          binders:
             kafka1:

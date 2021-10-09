@@ -9,7 +9,7 @@
     </bpmn:startEvent>
     <bpmn:serviceTask id="dm.input-validation" name="Input Validation">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.isValid" target="isValid" />
         </zeebe:ioMapping>
@@ -23,7 +23,7 @@
     <bpmn:sequenceFlow id="Flow_1ycy4e1" sourceRef="dm.input-validation" targetRef="Gateway_12mpu7z" />
     <bpmn:serviceTask id="dm.sftp-download" name="SFTP Download">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
@@ -59,14 +59,14 @@
     <bpmn:sequenceFlow id="Flow_108glqf" sourceRef="dm.bussiness-notification" targetRef="Event_0x1tc6z" />
     <bpmn:serviceTask id="dm.bussiness-notification" name="Notification">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ykqw4d</bpmn:incoming>
       <bpmn:outgoing>Flow_108glqf</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="dm.unzip" name="Unzip">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
@@ -76,7 +76,7 @@
     </bpmn:serviceTask>
     <bpmn:serviceTask id="dm.metadata-extraction" name="Metadata Extraction">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.hasCheck" target="hasCheck" />
         </zeebe:ioMapping>
@@ -91,7 +91,7 @@
     </bpmn:parallelGateway>
     <bpmn:serviceTask id="dm.auto-classification" name="Auto Classification">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.lob" target="lob" />
         </zeebe:ioMapping>
@@ -102,7 +102,7 @@
     <bpmn:sequenceFlow id="Flow_1kl6v9c" sourceRef="dm.image-conversion-2jpg" targetRef="dm.auto-classification" />
     <bpmn:serviceTask id="dm.image-conversion-2jpg" name="To JPG">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
@@ -118,10 +118,13 @@
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="dm.check-processing" name="Check Processing">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="metaData.isAutoComplete" value="true" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_05j3i80</bpmn:incoming>
       <bpmn:outgoing>Flow_0l6y5ax</bpmn:outgoing>
@@ -151,17 +154,21 @@
     </bpmn:parallelGateway>
     <bpmn:serviceTask id="dm.sftp-export" name="SFTP Export">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.batchId" target="batchId" />
         </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="metaData.isAutoAck" value="true" />
+          <zeebe:header key="metaData.maxFilePerBatch" value="10" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1sxvajk</bpmn:incoming>
       <bpmn:outgoing>Flow_1j8zbob</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="dm.image-conversion-2tif" name="To TIF">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
@@ -181,7 +188,7 @@
     </bpmn:intermediateCatchEvent>
     <bpmn:serviceTask id="dm.ack-status-update" name="Update Status">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
@@ -201,7 +208,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="dm.manage-engine" name="Create ME Ticket">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
@@ -225,10 +232,13 @@
     <bpmn:sequenceFlow id="Flow_11mo232" sourceRef="Event_1aljs16" targetRef="Gateway_1p5yw4q" />
     <bpmn:serviceTask id="dm.manual-classification" name="Manual Classification">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ticketProcessing" retries="3" />
+        <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
           <zeebe:output source="= response.traceId" target="traceId" />
         </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="metaData.isAutoComplete" value="true" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1k1e9lw</bpmn:incoming>
       <bpmn:outgoing>Flow_1cmlfzk</bpmn:outgoing>
@@ -244,7 +254,7 @@
       <bpmn:messageEventDefinition id="MessageEventDefinition_1yt7uw2" messageRef="Message_19txv1j" />
     </bpmn:intermediateCatchEvent>
   </bpmn:process>
-  <bpmn:message id="Message_0tylj6k" name="dm.sftp-new-file" />
+  <bpmn:message id="Message_0tylj6k" name="dm.sftp-new-zip-file" />
   <bpmn:message id="Message_0c4ewsy" name="dm.check-processing-responses">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="= eventId" />

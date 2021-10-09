@@ -25,5 +25,4 @@ public interface DocumentProcessService {
     AcknowledgementUpdateResult updateAck(AcknowledgementUpdateRequest request);
 
     ManageEngineResult createTicket(ManageEngineRequest request);
-
 }
