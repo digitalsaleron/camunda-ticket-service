@@ -120,7 +120,9 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
+          <zeebe:input source="= &#34;check-processing-&#34; + eventId" target="eventId" />
           <zeebe:output source="= response.traceId" target="traceId" />
+          <zeebe:output source="= response.eventId" target="eventId" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="metaData.isAutoComplete" value="true" />
@@ -190,7 +192,9 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
+          <zeebe:input source="= &#34;update-status-&#34; + eventId" target="eventId" />
           <zeebe:output source="= response.traceId" target="traceId" />
+          <zeebe:output source="= substring(eventId, string length(&#34;update-status-&#34;))" target="eventId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1btl79e</bpmn:incoming>
@@ -210,7 +214,9 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
+          <zeebe:input source="= &#34;create-ticket-&#34; + eventId" target="eventId" />
           <zeebe:output source="= response.traceId" target="traceId" />
+          <zeebe:output source="= substring(eventId, string length(&#34;create-ticket-&#34;))" target="eventId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1b2spi7</bpmn:incoming>
@@ -234,7 +240,9 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="documentProcessing" retries="3" />
         <zeebe:ioMapping>
+          <zeebe:input source="= &#34;manual-classification-&#34; + eventId" target="eventId" />
           <zeebe:output source="= response.traceId" target="traceId" />
+          <zeebe:output source="= response.eventId" target="eventId" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="metaData.isAutoComplete" value="true" />
@@ -244,11 +252,21 @@
       <bpmn:outgoing>Flow_1cmlfzk</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:intermediateCatchEvent id="Event_1qwxte0" name="Check Process Complete">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= substring(eventId, string length(&#34;check-processing-&#34;))" target="eventId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l6y5ax</bpmn:incoming>
       <bpmn:outgoing>Flow_04kuzkh</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1t5cvp4" messageRef="Message_0c4ewsy" />
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="Event_1aljs16" name="Operator Completion">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= substring(eventId, string length(&#34;manual-classification-&#34;))" target="eventId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cmlfzk</bpmn:incoming>
       <bpmn:outgoing>Flow_11mo232</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1yt7uw2" messageRef="Message_19txv1j" />
