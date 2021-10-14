@@ -125,7 +125,7 @@
           <zeebe:output source="= response.eventId" target="eventId" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="metaData.isAutoComplete" value="true" />
+          <zeebe:header key="config.isAutoComplete" value="true" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_05j3i80</bpmn:incoming>
@@ -161,8 +161,8 @@
           <zeebe:output source="= response.batchId" target="batchId" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="metaData.isAutoAck" value="true" />
-          <zeebe:header key="metaData.maxFilePerBatch" value="10" />
+          <zeebe:header key="config.isAutoAck" value="true" />
+          <zeebe:header key="config.maxFilePerBatch" value="10" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1sxvajk</bpmn:incoming>
@@ -245,7 +245,7 @@
           <zeebe:output source="= response.eventId" target="eventId" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="metaData.isAutoComplete" value="true" />
+          <zeebe:header key="config.isAutoComplete" value="true" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1k1e9lw</bpmn:incoming>
