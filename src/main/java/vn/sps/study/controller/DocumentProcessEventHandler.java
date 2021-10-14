@@ -5,18 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.config.ListenerContainerCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.integration.annotation.Gateway;
-import org.springframework.integration.annotation.MessagingGateway;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer;
-import org.springframework.kafka.listener.DefaultAfterRollbackProcessor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.backoff.FixedBackOff;
 import vn.sps.study.app.ProfileNames;
 import vn.sps.study.model.*;
 import vn.sps.study.service.DocumentProcessService;
@@ -26,7 +19,6 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -35,6 +27,9 @@ import java.util.function.Supplier;
 @Slf4j
 @Profile(ProfileNames.DOCUMENT_MANAGEMENT)
 public class DocumentProcessEventHandler {
+
+    @Value("${header.field-name:config}")
+    private String headerFieldName;
 
     @Autowired
     private DocumentProcessService service;
@@ -192,7 +187,7 @@ public class DocumentProcessEventHandler {
             String traceId = t.findValue("traceId").textValue();
             String eventId = t.findValue("eventId").textValue();
 
-            ObjectNode metaData = (ObjectNode) t.findValue("metadata");
+            ObjectNode metaData = (ObjectNode) t.findValue(headerFieldName);
 
             log.info("Received manual classification event for document {} eventId = {}", traceId, eventId);
 
@@ -209,13 +204,13 @@ public class DocumentProcessEventHandler {
     }
 
     private boolean isTrue(ObjectNode metaData, String fieldName) {
-        if (metaData!=null){
+        if (metaData == null){
             return false;
         }
         try {
             return metaData.findValue(fieldName).booleanValue();
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("Can't find header {}",fieldName);
         }
         return false;
     }
@@ -251,7 +246,7 @@ public class DocumentProcessEventHandler {
 
             String traceId = t.findValue("traceId").textValue();
             String eventId = t.findValue("eventId").textValue();
-            ObjectNode metaData = (ObjectNode) t.findValue("metadata");
+            ObjectNode metaData = (ObjectNode) t.findValue(headerFieldName);
 
             log.info("Received check processing event for document {}", traceId);
 
@@ -295,7 +290,7 @@ public class DocumentProcessEventHandler {
 
             String traceId = t.findValue("traceId").textValue();
             String eventId = t.findValue("eventId").textValue();
-            ObjectNode metaData = (ObjectNode) t.findValue("metadata");
+            ObjectNode metaData = (ObjectNode) t.findValue(headerFieldName);
 
             log.info("Received sftp export event for document {}", traceId);
 
