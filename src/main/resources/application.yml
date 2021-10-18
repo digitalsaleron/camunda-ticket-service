@@ -76,7 +76,7 @@ spring:
                   max.poll.records: 5
                   max.poll.interval.ms: 300000
                transaction:
-                  transaction-id-prefix: ticket-service-${random.uuid}-
+                  transaction-id-prefix: tx-ticket-service-
                   producer:
                      configuration:
                         max.in.flight.requests.per.connection: 1

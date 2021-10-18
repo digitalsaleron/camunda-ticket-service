@@ -273,7 +273,7 @@
     </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmn:message id="Message_0tylj6k" name="dm.sftp-new-zip-file" />
-  <bpmn:message id="Message_0c4ewsy" name="dm.check-processing-responses">
+  <bpmn:message id="Message_0c4ewsy" name="dm.check-processing-completion">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="= eventId" />
     </bpmn:extensionElements>
