@@ -125,7 +125,7 @@ spring:
           destination: ${project.dm.prefix}.operator-completion
         completeCheckProcessing-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.check-processing-responses
+          destination: ${project.dm.prefix}.check-processing-completion
         acknowledgePackage-out-0:
           binder: kafka1
           destination: ${project.dm.prefix}.acknowledgement
