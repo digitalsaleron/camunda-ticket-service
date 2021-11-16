@@ -14,6 +14,12 @@ public class TicketRequest {
 	private boolean isValid;
 	private boolean isApproved;
 	private String type;
+	private String exceptionStep;
+
+	private TicketRequest(String ticketId, int amount, int totalCostAmount, boolean isValid, boolean isApproved, String type) {
+		this(ticketId,amount,totalCostAmount,isValid,isApproved,type,null);
+	}
+
 
 	public static TicketRequest from(String ticketId, String type, int amount,
 	        int totalCostAmount) {

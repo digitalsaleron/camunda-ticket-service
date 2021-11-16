@@ -1,4 +1,0 @@
-bootstrap.server: 192.168.56.4:9092
-tenant.prefix: rd.mt
-
-springboot-admin-server: http://localhost:8089

@@ -1,0 +1,9 @@
+sftp:
+  scanner.scheduler:
+    enabled: ${SFTP_SCANNER_SCHEDULER_ENABLED:false}
+    fixedDelayString: ${SFTP_SCANNER_SCHEDULER_FIXED_DELAY_STRING:PT5S}
+  parentDir: ${SFTP_PARENT_DIR:./data}
+  inputFolder: ${SFTP_INPUT_DIR:input}
+  outputFolder: ${SFTP_OUTPUT_DIR:output}
+  uploadingCaseEndsWith: uploading
+  importedCaseEndsWith: imported

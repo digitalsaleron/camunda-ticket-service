@@ -1,14 +1,13 @@
-sleep.time.second: 1
 spring:
    boot.admin.client:
       enabled: false
-      url: http://localhost:8089
+      url: ${springboot-admin-server}
       instance:
          prefer-ip: true
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: process
+      function.definition: validateInput;sftpDownload;unzip;extractMetadata;convertToJPG;convertToTIF;autoClassify;manualClassify;processCheck;sftpExport;updateAckStatus;createMETicket;completeManualClassForDocument;completeCheckProcessing;acknowledgePackage
       stream:
          binders:
             kafka1:
@@ -19,33 +18,19 @@ spring:
                         stream:
                            kafka:
                               binder:
-                                 brokers: ${bootstrap.server}
+                                 brokers: ${BOOTSTRAP_SERVERS:localhost:9092}
+                                 configuration.security.protocol: PLAINTEXT
          bindings:
-            applicationMetrics.destination: ${tenant.prefix}.process-metrics
-            process-in-0:
-               binder: kafka1
-               destination: ${tenant.prefix}.ticket-approval-requests
-               group: extraction
-               consumer:
-                  maxAttempts: 1
-            process-out-0:
-               binder: kafka1
-               destination: ${tenant.prefix}.ticket-approval-responses
+            applicationMetrics.destination: process-metrics
          kafka:
-            bindings:
-               process-in-0:
-                  consumer:
-                     configuration:
-                        isolation.level: read_committed
-                        max.poll.records: 5
-                        max.poll.interval.ms: 300000
-               process-out-0:
-                  producer:
-                     topic.properties:
-                        retention.ms: 600000
             binder:
+               minPartitionCount: 1
+               consumerProperties:
+                  isolation.level: read_committed
+                  max.poll.records: 5
+                  max.poll.interval.ms: 300000
                transaction:
-                  transaction-id-prefix: approval-
+                  transaction-id-prefix: tx-ticket-service-
                   producer:
                      configuration:
                         max.in.flight.requests.per.connection: 1
@@ -100,20 +85,4 @@ management:
       jmx.exposure.include: '*'
    endpoint:
       health.show-details: always
-camunda.bpm.client:
-   base-url: http://192.168.56.4:8099/engine-rest # the URL pointing to the Camunda Platform Runtime REST API
-   lock-duration: 300000 # defines how many milliseconds the External Tasks are locked until they can be fetched again
-   subscriptions:
-      validatingTickets:
-         variable-names: type,amount,totalCostAmount
-         process-definition-key: TicketApprovalProcess
-      approvedTickets:
-         variable-names: type,amount,totalCostAmount,isValid,isApproved
-         process-definition-key: TicketApprovalProcess
-zeebe.client:
-   broker.gatewayAddress: 192.168.56.4:26500
-   security.plaintext: true
-   worker:
-      maxJobsActive: 1
-      threads: 1
    
