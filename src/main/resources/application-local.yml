@@ -4,8 +4,3 @@ springboot-admin-server: http://localhost:8089
 bootstrap.server: 192.168.56.4:9092
 
 zeebe-gateway: 192.168.56.4:26500
-
-sftp:
-  parentDir: ./data
-  scanner:
-    scheduler:
