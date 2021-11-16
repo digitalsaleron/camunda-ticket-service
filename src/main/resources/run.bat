@@ -1,1 +1,1 @@
-java -Xms50m -Xmx100m -Dspring.profiles.active=local,dm,sftp -jar camunda-ticket-service.jar
+java -Xms50m -Xmx100m -Dspring.profiles.active=dm,sftp -jar camunda-ticket-service.jar
