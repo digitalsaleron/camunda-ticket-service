@@ -1,132 +1,132 @@
-project.dm.prefix: dm
+project.prefix: dm
 spring:
   cloud:
     stream:
       bindings:
         validateInput-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.input-validation-requests
+          destination: ${project.prefix}.input-validation-requests
           group: document-service
           consumer:
             maxAttempts: 1
         validateInput-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.input-validation-responses
+          destination: ${project.prefix}.input-validation-responses
         sftpDownload-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.sftp-download-requests
+          destination: ${project.prefix}.sftp-download-requests
           group: document-service
           consumer:
             maxAttempts: 1
         sftpDownload-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.sftp-download-responses
+          destination: ${project.prefix}.sftp-download-responses
         unzip-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.unzip-requests
+          destination: ${project.prefix}.unzip-requests
           group: document-service
           consumer:
             maxAttempts: 1
         unzip-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.unzip-responses
+          destination: ${project.prefix}.unzip-responses
         extractMetadata-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.metadata-extraction-requests
+          destination: ${project.prefix}.metadata-extraction-requests
           group: document-service
           consumer:
             maxAttempts: 1
         extractMetadata-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.metadata-extraction-responses
+          destination: ${project.prefix}.metadata-extraction-responses
         convertToJPG-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.image-conversion-2jpg-requests
+          destination: ${project.prefix}.image-conversion-2jpg-requests
           group: document-service
           consumer:
             maxAttempts: 1
         convertToJPG-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.image-conversion-2jpg-responses
+          destination: ${project.prefix}.image-conversion-2jpg-responses
         convertToTIF-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.image-conversion-2tif-requests
+          destination: ${project.prefix}.image-conversion-2tif-requests
           group: document-service
           consumer:
             maxAttempts: 1
         convertToTIF-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.image-conversion-2tif-responses
+          destination: ${project.prefix}.image-conversion-2tif-responses
         autoClassify-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.auto-classification-requests
+          destination: ${project.prefix}.auto-classification-requests
           group: document-service
           consumer:
             maxAttempts: 1
         autoClassify-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.auto-classification-responses
+          destination: ${project.prefix}.auto-classification-responses
         manualClassify-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.manual-classification-requests
+          destination: ${project.prefix}.manual-classification-requests
           group: document-service
           consumer:
             maxAttempts: 1
         manualClassify-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.manual-classification-responses
+          destination: ${project.prefix}.manual-classification-responses
         processCheck-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.check-processing-requests
+          destination: ${project.prefix}.check-processing-requests
           group: document-service
           consumer:
             maxAttempts: 1
         processCheck-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.check-processing-responses
+          destination: ${project.prefix}.check-processing-responses
         sftpExport-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.sftp-export-requests
+          destination: ${project.prefix}.sftp-export-requests
           group: document-service
           consumer:
             maxAttempts: 1
         sftpExport-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.sftp-export-responses
+          destination: ${project.prefix}.sftp-export-responses
         notifyBusiness-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.bussiness-notification-requests
+          destination: ${project.prefix}.bussiness-notification-requests
           group: document-service
           consumer:
             maxAttempts: 1
         notifyBusiness-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.bussiness-notification-responses
+          destination: ${project.prefix}.bussiness-notification-responses
         updateAckStatus-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.ack-status-update-requests
+          destination: ${project.prefix}.ack-status-update-requests
           group: document-service
           consumer:
             maxAttempts: 1
         updateAckStatus-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.ack-status-update-responses
+          destination: ${project.prefix}.ack-status-update-responses
         createMETicket-in-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.manage-engine-requests
+          destination: ${project.prefix}.manage-engine-requests
           group: document-service
           consumer:
             maxAttempts: 1
         createMETicket-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.manage-engine-responses
+          destination: ${project.prefix}.manage-engine-responses
         completeManualClassForDocument-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.operator-completion
+          destination: ${project.prefix}.operator-completion
         completeCheckProcessing-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.check-processing-completion
+          destination: ${project.prefix}.check-processing-completion
         acknowledgePackage-out-0:
           binder: kafka1
-          destination: ${project.dm.prefix}.acknowledgement
+          destination: ${project.prefix}.acknowledgement
    

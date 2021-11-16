@@ -1,4 +1,3 @@
-sleep.time.second: 1
 spring:
    boot.admin.client:
       enabled: false
@@ -8,7 +7,7 @@ spring:
    application.name: zeebe-ticket-service
    jmx.enabled: true
    cloud:
-      function.definition: validateTicket;approveTicket;resolveTicket;notifyFailedTicket;notifyRejectedTicket;validateInput;sftpDownload;unzip;extractMetadata;convertToJPG;convertToTIF;autoClassify;manualClassify;processCheck;sftpExport;updateAckStatus;createMETicket;completeManualClassForDocument;completeCheckProcessing;acknowledgePackage
+      function.definition: validateInput;sftpDownload;unzip;extractMetadata;convertToJPG;convertToTIF;autoClassify;manualClassify;processCheck;sftpExport;updateAckStatus;createMETicket;completeManualClassForDocument;completeCheckProcessing;acknowledgePackage
       stream:
          binders:
             kafka1:
@@ -19,55 +18,10 @@ spring:
                         stream:
                            kafka:
                               binder:
-                                 brokers: ${bootstrap.server}
+                                 brokers: ${BOOTSTRAP_SERVERS:localhost:9092}
                                  configuration.security.protocol: PLAINTEXT
          bindings:
-            applicationMetrics.destination: ${tenant.prefix}.process-metrics
-            validateTicket-in-0:
-               binder: kafka1
-               destination: ticket-validation-requests
-               group: ticket-service
-               consumer:
-                  maxAttempts: 1
-            validateTicket-out-0:
-               binder: kafka1
-               destination: ticket-validation-responses
-            approveTicket-in-0:
-               binder: kafka1
-               destination: ticket-approval-requests
-               group: ticket-service
-               consumer:
-                  maxAttempts: 1
-            approveTicket-out-0:
-               binder: kafka1
-               destination: ticket-approval-responses
-            resolveTicket-in-0:
-               binder: kafka1
-               destination: ticket-resolution-requests
-               group: ticket-service
-               consumer:
-                  maxAttempts: 1
-            resolveTicket-out-0:
-               binder: kafka1
-               destination: ticket-resolution-responses
-            notifyFailedTicket-in-0:
-               binder: kafka1
-               destination: ticket-notification-requests
-               group: ticket-service
-               consumer:
-                  maxAttempts: 1
-            notifyFailedTicket-out-0:
-               binder: kafka1
-               destination: ticket-notification-responses
-            notifyRejectedTicket-in-0:
-               binder: kafka1
-               destination: ticket-notification-rand4-requests
-               group: ticket-service
-               consumer:
-                  maxAttempts: 1
-            notifyRejectedTicket-out-0:
-               binder: kafka1
-               destination: ticket-notification-rand4-responses
+            applicationMetrics.destination: process-metrics
          kafka:
             binder:
                minPartitionCount: 1
@@ -131,14 +85,4 @@ management:
       jmx.exposure.include: '*'
    endpoint:
       health.show-details: always
-
-zeebe.client:
-   broker.gatewayAddress: ${zeebe-gateway}
-   security:
-      plaintext: true
-      #certPath: C:/Users/thminh_1/.ssh/ssl/digitalsaleron.cer
-      #certPath: C:/Users/thminh_1/.ssh/zeebeclient.keystore.jks
-   worker:
-      maxJobsActive: 1
-      threads: 1
    
