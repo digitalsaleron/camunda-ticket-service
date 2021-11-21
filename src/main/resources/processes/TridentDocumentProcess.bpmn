@@ -448,7 +448,7 @@
       <bpmndi:BPMNShape id="Event_0qav7mc_di" bpmnElement="Event_0lbpm0qasds">
         <dc:Bounds x="210" y="373" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="191" y="416" width="85" height="14" />
+          <dc:Bounds x="192" y="416" width="85" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0gdekt2_di" bpmnElement="StartEvent_1">
