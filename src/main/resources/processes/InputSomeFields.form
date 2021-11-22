@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "components": [
+    {
+      "label": "Phone Number",
+      "type": "number",
+      "id": "Field_14w4wuv",
+      "key": "phoneNumber",
+      "description": "e.g: 123456",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "InputSomeFields"
+}

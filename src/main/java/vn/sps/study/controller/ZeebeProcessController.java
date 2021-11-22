@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.google.protobuf.Duration;
+import io.camunda.zeebe.client.api.command.CreateProcessInstanceCommandStep1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,31 +24,30 @@ public class ZeebeProcessController {
     @Autowired
     private IdService idService;
 
-    @PostMapping("/processes/{processId}/start")
+    @PostMapping("/processes/{processId}/{version}/start")
     public void request(
-            @PathVariable(name = "ticketId", required = false) String ticketId,
-            @RequestParam(name = "type", required = false, defaultValue = "Facility") String type,
-            @RequestParam(name = "amount", required = false, defaultValue = "1") int amount,
-            @RequestParam(name = "totalCostAmount", required = false, defaultValue = "500") int totalCostAmount,
             @PathVariable(name = "processId", required = true) String processId,
-            @RequestBody(required = false) String envelope) {
+            @PathVariable(name = "version", required = false) Integer version,
+            @RequestBody Map<String, Object> bodyParts) {
 
-        if (ticketId == null) {
-            ticketId = idService.next("TicketId");
+        final Map<String, Object> variables = new HashMap<String, Object>();
+        variables.putAll(bodyParts);
+
+        CreateProcessInstanceCommandStep1.CreateProcessInstanceCommandStep2 commandStep2 = client.newCreateInstanceCommand().bpmnProcessId(processId);
+        CreateProcessInstanceCommandStep1.CreateProcessInstanceCommandStep3 commandStep3 = null;
+
+        String versionS = "latest";
+        if (version==null || version.intValue() <=0) {
+            commandStep3 = commandStep2.latestVersion();
+        }else {
+            commandStep3 = commandStep2.version(version.intValue());
+            versionS = version.intValue() + "";
         }
 
-        Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("ticketId", ticketId);
-        variables.put("type", type);
-        variables.put("amount", amount);
-        variables.put("totalCostAmount", totalCostAmount);
-        variables.put("envelope", envelope);
+        commandStep3.variables(variables)
+                .send();
 
-        client.newCreateInstanceCommand().bpmnProcessId(processId)
-                .latestVersion().variables(variables).send();
-        log.info(
-                "Request a ticket with id = {}, type = {}, amount = {}, totalCostAmount = {}",
-                ticketId, type, amount, totalCostAmount);
+        log.info("Start process [{}/{}]", processId, versionS);
     }
 
     @PostMapping("/messages/{messageName}/start")

@@ -85,4 +85,8 @@ management:
       jmx.exposure.include: '*'
    endpoint:
       health.show-details: always
+zeebe.client:
+   broker.gatewayAddress: ${ZEEBE_GATEWAY_ADDRESS:localhost:26500}
+   security.plaintext: true
+
    

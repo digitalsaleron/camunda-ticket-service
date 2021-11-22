@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1wfy0w5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Process_0fpqblv" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="userTaskForm_0e0qgq3">{   "schemaVersion": 2,   "components": [     {       "label": "Phone Number",       "type": "number",       "id": "Field_14w4wuv",       "key": "phoneNumber",       "description": "e.g: 123456",       "validate": {         "required": true       }     }   ],   "type": "default",   "id": "InputSomeFields" }</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= assignee" target="assignee" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0ryxrd7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0ryxrd7" sourceRef="StartEvent_1" targetRef="Activity_145f5p6" />
+    <bpmn:endEvent id="Event_09xu6sr">
+      <bpmn:incoming>Flow_04ulbm3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_04ulbm3" sourceRef="Activity_145f5p6" targetRef="Event_09xu6sr" />
+    <bpmn:userTask id="Activity_145f5p6">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="= assignee" target="assignee" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assignee" value="demo" />
+        </zeebe:taskHeaders>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_0e0qgq3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ryxrd7</bpmn:incoming>
+      <bpmn:outgoing>Flow_04ulbm3</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0fpqblv">
+      <bpmndi:BPMNEdge id="Flow_0ryxrd7_di" bpmnElement="Flow_0ryxrd7">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04ulbm3_di" bpmnElement="Flow_04ulbm3">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="432" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09xu6sr_di" bpmnElement="Event_09xu6sr">
+        <dc:Bounds x="432" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ic9yx4_di" bpmnElement="Activity_145f5p6">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
